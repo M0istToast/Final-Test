@@ -1,16 +1,21 @@
 /*# sourceMappingURL=style.css.map */
 body {
     font-family: Arial, sans-serif;
-    background-color: #ffffff;
+    background-color: #2b2b2b;
     display: flex;
     justify-content: center;
     margin: 0;
     padding: 0;
   }
   .container {
-    background-color: #d6d6d6;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+  }
+  .button {
+    background-color: #482d2d;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
   }
