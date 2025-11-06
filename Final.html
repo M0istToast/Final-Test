@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Compile style.sass to style.css (e.g. `sass style.sass style.css`) -->
@@ -8,9 +9,40 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="container">
-        <div class="button">asd</div>
-    <div class="button">asrt</div>
+    
+    <div class="Header">
+        <div class="button"><p class="Site-name">POYOZO</p></div>
+        <div class="button">asrt</div>
+        <div class="search-bar">enter text here</div>
+        <div class="button">sda</div>
+        <div class="button">wda</div>
     </div>
+    <div class="Main">
+        <div class="Nav-left">
+        <h3>YEs</h3>
+    </div>
+    <div class="Main-Grid"> 
+        <p class="item">
+            </p>
+        <p class="item"></p>
+        <p class="item"></p>
+        <p class="item"></p>
+        <p class="item"></p>
+        <p class="item"></p>
+        <p class="item"></p>
+        <p class="item"></p>
+        <p class="item"></p>
+        <p class="item"></p>
+    
+    </div>
+
+</div>
+<script>
+    fetch (`GET https://api.rawg.io/api/platforms?key=e0e37af7f0f8406ba25a09b1236c40dd
+    GET https://api.rawg.io/api/games?key=e0e37af7f0f8406ba25a09b1236c40dd&dates=2019-09-01,2019-09-30&platforms=18,1,7`
+)
+    print ${data.object.definitions.tag.image_background.title}
+</script>
+
 </body>
 </html>
