@@ -1,48 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Compile style.sass to style.css (e.g. `sass style.sass style.css`) -->
-    <link rel="stylesheet" href="style.css">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POYOZO</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
-    <div class="Header">
-        <div class="button"><p class="Site-name">POYOZO</p></div>
-        <div class="button">asrt</div>
-        <div class="search-bar">enter text here</div>
-        <div class="button">sda</div>
-        <div class="button">wda</div>
+  <div class="Header">
+    <div class="button"><p class="Site-name">POYOZO</p></div>
+    <div class="button">Home</div>
+    <div class="search-bar">
+      <input type="text" placeholder="Search games...">
     </div>
-    <div class="Main">
-        <div class="Nav-left">
-        <h3>YEs</h3>
+    <div class="button">About</div>
+    <div class="button">Contact</div>
+
+    <!-- 🔞 Safe Mode Switch -->
+    <div class="safe-mode-toggle">
+      <label>
+        <input type="checkbox" id="safeMode" checked>
+        Safe Mode
+      </label>
     </div>
-    <div class="Main-Grid"> 
-        <p class="item">
-            </p>
-        <p class="item"></p>
-        <p class="item"></p>
-        <p class="item"></p>
-        <p class="item"></p>
-        <p class="item"></p>
-        <p class="item"></p>
-        <p class="item"></p>
-        <p class="item"></p>
-        <p class="item"></p>
-    
+  </div>
+
+  <div class="Main">
+    <div class="Nav-left">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="#">Popular Games</a></li>
+        <li><a href="#">New Releases</a></li>
+        <li><a href="#">Upcoming</a></li>
+        <li><a href="#">Top Rated</a></li>
+      </ul>
     </div>
 
-</div>
-<script>
-    fetch (`GET https://api.rawg.io/api/platforms?key=e0e37af7f0f8406ba25a09b1236c40dd
-    GET https://api.rawg.io/api/games?key=e0e37af7f0f8406ba25a09b1236c40dd&dates=2019-09-01,2019-09-30&platforms=18,1,7`
-)
-    print ${data.object.definitions.tag.image_background.title}
-</script>
+    <div class="Main-Grid" id="games"></div>
+  </div>
 
+  <script>
+    const apiKey = "e0e37af7f0f8406ba25a09b1236c40dd";
+    const gamesContainer = document.getElementById("games");
+    const safeModeToggle = document.getElementById("safeMode");
+    let safeModeOn = true; // default on
+
+    // Fetch and display games from a given RAWG API URL
+    async function fetchGames(url) {
+      try {
+        gamesContainer.innerHTML = "<p>Loading games...</p>";
+        const response = await fetch(url);
+        const data = await response.json();
+
+        gamesContainer.innerHTML = "";
+
+        data.results.forEach(game => {
+          const isMature =
+            game.esrb_rating?.name === "Mature" ||
+            game.esrb_rating?.name === "Adults Only" ||
+            game.genres?.some(g => g.name.toLowerCase().includes("adult"));
+
+          // Create card
+          const gameDiv = document.createElement("div");
+          gameDiv.classList.add("game");
+          if (isMature && safeModeOn) gameDiv.classList.add("blurred");
+
+          gameDiv.innerHTML = `
+            <img src="${game.background_image}" alt="${game.name}" />
+            <h3>${game.name}</h3>
+            ${isMature ? `<span class="mature-badge">18+</span>` : ""}
+          `;
+          gamesContainer.appendChild(gameDiv);
+        });
+      } catch (error) {
+        console.error("Error fetching games:", error);
+        gamesContainer.innerHTML = "<p>Failed to load games.</p>";
+      }
+    }
+
+    // Endpoints
+    const endpoints = {
+      popular: `https://api.rawg.io/api/games?key=${apiKey}&ordering=-rating&page_size=40`,
+      new: `https://api.rawg.io/api/games?key=${apiKey}&dates=2025-01-01,2025-12-31&ordering=-released&page_size=40`,
+      upcoming: `https://api.rawg.io/api/games?key=${apiKey}&dates=2025-11-01,2026-12-31&ordering=released&page_size=40`,
+      top: `https://api.rawg.io/api/games?key=${apiKey}&ordering=-metacritic&page_size=40`
+    };
+
+    // Default load
+    fetchGames(endpoints.popular);
+
+    // Sidebar navigation
+    document.querySelectorAll(".Nav-left a").forEach(link => {
+      link.addEventListener("click", e => {
+        e.preventDefault();
+
+        document.querySelectorAll(".Nav-left a").forEach(a => a.classList.remove("active"));
+        e.target.classList.add("active");
+
+        const text = e.target.textContent.trim().toLowerCase();
+        if (text.includes("popular")) fetchGames(endpoints.popular);
+        else if (text.includes("new")) fetchGames(endpoints.new);
+        else if (text.includes("upcoming")) fetchGames(endpoints.upcoming);
+        else if (text.includes("top")) fetchGames(endpoints.top);
+      });
+    });
+
+    // Safe mode toggle behavior
+    safeModeToggle.addEventListener("change", () => {
+      safeModeOn = safeModeToggle.checked;
+
+      // Update existing cards without refetching
+      document.querySelectorAll(".game").forEach(card => {
+        const badge = card.querySelector(".mature-badge");
+        if (badge) {
+          if (safeModeOn) card.classList.add("blurred");
+          else card.classList.remove("blurred");
+        }
+      });
+    });
+  </script>
 </body>
 </html>
