@@ -1,0 +1,3 @@
+IESPĒJAMS REDZĒT ACĪM NEPATĪKAMAS LIETAS JEB "NSFW"...
+
+   Ļoti atvainojos par to, bet diemžēl es neesmu izdomājis kā tās paslēpt.
